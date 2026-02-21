@@ -1,0 +1,34 @@
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+
+df = pd.read_csv(r"C:\Users\Admin\Downloads\day21_housing (1).csv")
+
+df["price_per_sqft"] = df["price"] / df["sqft"]
+df["price_per_sqft"] = df["price_per_sqft"].replace([np.inf, -np.inf], 0)
+df["price_per_sqft"] = df["price_per_sqft"].fillna(0)
+
+df["price_per_room"] = df["price"] / df["rooms"]
+df["price_per_room"] = df["price_per_room"].replace([np.inf, -np.inf], 0)
+df["price_per_room"] = df["price_per_room"].fillna(0)
+
+df["bedroom_ratio"] = df["bedrooms"] / df["rooms"]
+df["bedroom_ratio"] = df["bedroom_ratio"].replace([np.inf, -np.inf], 0)
+df["bedroom_ratio"] = df["bedroom_ratio"].fillna(0)
+
+
+X1 = df[["sqft", "rooms", "bedrooms"]]
+y = df["price"]
+
+model1 = LinearRegression()
+model1.fit(X1, y)
+print("Basic model R2:", model1.score(X1, y))
+
+X2 = df[["sqft", "rooms", "bedrooms",
+         "price_per_sqft",
+         "price_per_room",
+         "bedroom_ratio"]]
+
+model2 = LinearRegression()
+model2.fit(X2, y)
+print("Domain features model R2:", model2.score(X2, y))
