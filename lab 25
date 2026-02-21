@@ -1,0 +1,26 @@
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.feature_selection import VarianceThreshold
+
+df = pd.read_csv(r"C:\Users\Admin\Downloads\day25_project.csv")
+
+df['price_per_sqft'] = np.where(df['sqft']>0, df['price']/df['sqft'], 0)
+df['price_per_room'] = np.where(df['rooms']>0, df['price']/df['rooms'], 0)
+df['bedroom_ratio'] = np.where(df['rooms']>0, df['bedrooms']/df['rooms'], 0)
+
+df['mul_interaction'] = df['sqft'] * df['rooms']
+df['add_interaction'] = df['sqft'] + df['rooms']
+
+df['log_price'] = np.log1p(df['price'])
+df['sqrt_sqft'] = np.sqrt(df['sqft'])
+
+X = df.drop('price', axis=1, errors='ignore')
+selector = VarianceThreshold(threshold=0.01)
+X_selected = selector.fit_transform(X)
+cols_selected = X.columns[selector.get_support()]
+df_selected = pd.DataFrame(X_selected, columns=cols_selected)
+
+df_selected.to_csv("data/day25_engineered.csv", index=False)
+
+print("Engineered dataset saved with shape:", df_selected.shape)
