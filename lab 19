@@ -1,0 +1,17 @@
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv(r"C:\Users\Admin\Downloads\day19_transform (1).csv")
+x = df['value']
+
+df['log1p'] = np.log1p(x)
+df['sqrt'] = np.sqrt(x)
+
+print("Original")
+print(df['value'].describe())
+
+print("\nlog1p")
+print(df['log1p'].describe())
+
+print("\nsqrt")
+print(df['sqrt'].describe())
